@@ -1,0 +1,480 @@
+Program.Sub.ScreenSU.Start
+Gui.Form..Create
+Gui.Form..Caption("Select Employee")
+Gui.Form..Size(10560,8475)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..BackColor(-2147483633)
+Gui.Form..MousePointer(0)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.txtBegEmpID.Create(TextBox,"",True,705,300,0,105,1800,True,0,"Arial",8,-2147483643,1)
+Gui.Form.txtBegEmpID.MaxLength(5)
+Gui.Form.txtBegEmpName.Create(TextBox,"",True,2640,300,0,960,1800,True,0,"Arial",8,-2147483643,1)
+Gui.Form.cmdBrowseBegEmp.Create(Button)
+Gui.Form.cmdBrowseBegEmp.Size(600,375)
+Gui.Form.cmdBrowseBegEmp.Position(3720,1755)
+Gui.Form.cmdBrowseBegEmp.Caption("^")
+Gui.Form.cmdBrowseBegEmp.Event(Click,cmdBrowseBegEmp_Click)
+Gui.Form.lbl1.Create(Label,"ID",True,510,255,0,105,1575,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl2.Create(Label,"Name",True,780,255,0,960,1575,True,0,"Arial",8,-2147483633,0)
+Gui.Form.dtpBegDate.Create(DatePicker)
+Gui.Form.dtpBegDate.Size(1935,285)
+Gui.Form.dtpBegDate.Position(105,360)
+Gui.Form.dtpEndDate.Create(DatePicker)
+Gui.Form.dtpEndDate.Size(1935,285)
+Gui.Form.dtpEndDate.Position(2715,360)
+Gui.Form.gsEmp.Create(GsGridControl)
+Gui.Form.gsEmp.Size(10140,4140)
+Gui.Form.gsEmp.Position(105,2295)
+Gui.Form.gsEmp.Event(RowCellClick,gsEmp_RowCellClick)
+Gui.Form.cmdClearEmp.Create(Button)
+Gui.Form.cmdClearEmp.Size(855,375)
+Gui.Form.cmdClearEmp.Position(105,6525)
+Gui.Form.cmdClearEmp.Caption("Clear")
+Gui.Form.cmdClearEmp.Event(Click,cmdClearEmp_Click)
+Gui.Form.cmdOK.Create(Button)
+Gui.Form.cmdOK.Size(855,375)
+Gui.Form.cmdOK.Position(105,7695)
+Gui.Form.cmdOK.Caption("OK")
+Gui.Form.cmdOK.Event(Click,cmdOK_Click)
+Gui.Form.lbl3.Create(Label,"Beginning Date",True,1935,255,0,105,105,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl4.Create(Label,"Ending Date",True,1935,255,0,2730,105,True,0,"Arial",8,-2147483633,0)
+Gui.Form.cmdAddEmp.Create(Button)
+Gui.Form.cmdAddEmp.Size(855,375)
+Gui.Form.cmdAddEmp.Position(9330,1755)
+Gui.Form.cmdAddEmp.Caption("Add")
+Gui.Form.cmdAddEmp.Event(Click,cmdAddEmp_Click)
+Gui.Form.lbl5.Create(Label,"ID",True,510,255,0,4680,1575,True,0,"Arial",8,-2147483633,0)
+Gui.Form.txtEndEmpID.Create(TextBox,"",True,705,300,0,4680,1800,True,0,"Arial",8,-2147483643,1)
+Gui.Form.txtEndEmpID.MaxLength(5)
+Gui.Form.lbl6.Create(Label,"Name",True,780,255,0,5550,1575,True,0,"Arial",8,-2147483633,0)
+Gui.Form.txtEndEmpName.Create(TextBox,"",True,2640,300,0,5535,1800,True,0,"Arial",8,-2147483643,1)
+Gui.Form.cmdBrowseEndEmp.Create(Button)
+Gui.Form.cmdBrowseEndEmp.Size(600,375)
+Gui.Form.cmdBrowseEndEmp.Position(8310,1755)
+Gui.Form.cmdBrowseEndEmp.Caption("^")
+Gui.Form.cmdBrowseEndEmp.Event(Click,cmdBrowseEndEmp_Click)
+Gui.Form.lbl7.Create(Label,"Beginning Employee",True,1935,255,0,105,1245,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl8.Create(Label,"Ending Employee",True,1935,255,0,4680,1245,True,0,"Arial",8,-2147483633,0)
+Gui.Form.chkAllEmp.Create(CheckBox)
+Gui.Form.chkAllEmp.Size(1560,360)
+Gui.Form.chkAllEmp.Position(105,7095)
+Gui.Form.chkAllEmp.Caption("All Employees")
+Gui.Form.chkAllDate.Create(CheckBox)
+Gui.Form.chkAllDate.Size(1560,360)
+Gui.Form.chkAllDate.Position(105,780)
+Gui.Form.chkAllDate.Caption("All Date")
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Global..BulkDeclareDate(dBegDate, dEndDate)
+v.Global..BulkDeclareString(sBegDate, sEndDate)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError)
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN, V.Ambient.PUser, V.Ambient.PPass)
+f.Intrinsic.Control.CallSub(create_dt)
+gui.Form..Show
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+Program.Sub.Form_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("Form_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+f.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Form_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Form_UnLoad.End
+
+Program.Sub.cmdBrowseBegEmp_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdBrowseBegEmp_Click._Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError, sRet)
+Function.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+f.Intrinsic.UI.Browser(50,"",v.Local.sret)
+
+Function.Intrinsic.Control.If(Variable.Local.sRet,"=","***CANCEL***")
+ 	Function.Intrinsic.UI.Msgbox("No employee was selected!")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.Else
+	f.Intrinsic.String.Split(v.Local.sret,"*!*",v.Local.sret)
+	gui.Form.txtBegEmpID.Text(v.Local.sret(0))
+	gui.Form.txtBegEmpName.Text(v.Local.sret(1))
+	gui.Form.txtEndEmpID.Text(v.Local.sret(0))
+	gui.Form.txtEndEmpName.Text(v.Local.sRet(1))
+	gui.Form.txtEndEmpID.SetFocus
+f.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdBrowseBegEmp_Click._Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdBrowseBegEmp_Click.End
+
+Program.Sub.cmdBrowseEndEmp_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdBrowseEndEmp_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError, sRet)
+Function.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+f.Intrinsic.UI.Browser(50,"",v.Local.sret)
+
+Function.Intrinsic.Control.If(Variable.Local.sRet,"=","***CANCEL***")
+ 	Function.Intrinsic.UI.Msgbox("No employee was selected!")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.Else
+	f.Intrinsic.String.Split(v.Local.sret,"*!*",v.Local.sret)
+	gui.Form.txtEndEmpID.Text(v.Local.sret(0))
+	gui.Form.txtEndEmpName.Text(v.Local.sret(1))
+	gui.Form.cmdAddEmp.SetFocus
+f.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdBrowseEndEmp_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdBrowseEndEmp_Click.End
+
+Program.Sub.cmdAddEmp_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdAddEmp_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sBegID, sEndID, sBegName, sEndName, sResult, sSQL, sError)
+
+f.Intrinsic.String.RPad(V.Screen.Form!txtBegEmpID.Text," ",5,v.Local.sBegID)
+f.Intrinsic.String.RPad(v.Screen.Form!txtBegEmpName.Text," ",30,v.Local.sBegName)
+f.Intrinsic.String.RPad(V.Screen.Form!txtEndEmpID.Text," ",5,v.Local.sEndID)
+f.Intrinsic.String.RPad(v.Screen.Form!txtEndEmpName.Text," ",30,v.Local.sEndName)
+
+f.Intrinsic.Control.If(v.Screen.Form!txtBegEmpID.Text.Trim,=,"", or, v.Screen.Form!txtEndEmpID.Text.Trim,=,"")
+	f.Intrinsic.UI.Msgbox("Please select Beginning and Ending employee.")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+f.Intrinsic.String.Build("Select Employee from V_Employee_Mstr where employee = '{0}'",v.Local.sBegID,v.Local.sSQL)
+f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sResult)
+f.Intrinsic.Control.If(v.Local.sResult.Trim,=,"")
+	f.Intrinsic.UI.Msgbox("Invalid data. Check Beginning Employee.")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+f.Intrinsic.String.Build("Select Employee from V_Employee_Mstr where Employee = '{0}'",v.Local.sEndID,v.Local.sSQL)
+f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sResult)
+f.Intrinsic.Control.If(v.Local.sResult.Trim,=,"")
+	f.Intrinsic.UI.Msgbox("Invalid data. Check Ending employee.")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+f.Intrinsic.String.Build("Select employee from V_Employee_Mstr where employee between '{0}' and '{1}'",v.Local.sBegID, v.Local.sEndId,v.Local.sSQL)
+f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sResult)
+f.Intrinsic.Control.If(v.Local.sResult.Trim,=,"")
+	f.Intrinsic.UI.Msgbox("Invalid data. Ending employee should be after Beginning employee.")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+f.Data.DataTable.AddRow("DT","BegID",v.Local.sBegID,"BegName",v.Local.sBegName,"EndID",v.Local.sEndID,"EndName",v.Local.sEndName,"Remove","Remove")
+gui.Form.txtBegEmpID.Text("")
+gui.Form.txtBegEmpName.Text("")
+gui.Form.txtEndEmpID.Text("")
+gui.Form.txtEndEmpName.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdAddEmp_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdAddEmp_Click.End
+
+Program.Sub.Create_DT.Start
+F.Intrinsic.Control.SetErrorHandler("Create_DT_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+
+f.Intrinsic.Control.If(V.DataTable.DT.Exists,=,True)
+	f.Data.DataTable.Close("DT")
+f.Intrinsic.Control.EndIf
+
+f.Data.DataTable.Create("DT",True)
+f.Data.DataTable.AddColumn("DT","BegID","string","")
+f.Data.DataTable.AddColumn("DT","BegName","string","")
+f.Data.DataTable.AddColumn("DT","EndID","string","")
+f.Data.DataTable.AddColumn("DT","EndName","string","")
+f.Data.DataTable.AddColumn("DT","Remove","string","Remove")
+
+Gui.Form.gsEmp.AddGridViewFromDataTable("GV","DT")
+f.Intrinsic.Control.CallSub(format_gsEmp)
+Gui.Form.gsEmp.MainView("GV")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Create_DT_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Create_DT.End
+
+Program.Sub.Format_gsEmp.Start
+F.Intrinsic.Control.SetErrorHandler("Format_gsEmp_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+Gui.Form.gsEmp.SetColumnProperty("GV","Remove", "ReadOnly", True)
+Gui.Form.gsEmp.SetColumnProperty("GV","Remove","AllowEdit",false)
+
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Format_gsEmp_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Format_gsEmp.End
+
+Program.Sub.gsEmp_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("gsEmp_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError,sSQL)
+F.Intrinsic.Control.If(V.Args.Column,=,"Remove")
+	Function.Data.DataTable.DeleteRow("DT", v.Args.RowIndex)	
+Function.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("gsEmp_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.gsEmp_RowCellClick.End
+
+Program.Sub.cmdClearEmp_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdClearEmp_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+gui.Form.txtBegEmpID.Text("")
+gui.Form.txtEndEmpID.Text("")
+gui.Form.txtBegEmpName.Text("")
+gui.Form.txtEndEmpName.Text("")
+f.Intrinsic.Control.CallSub(create_dt)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdClearEmp_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdClearEmp_Click.End
+
+Program.Sub.cmdOK_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdOK_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError, sSQL, sDateClause, sFileName, sMap, sContent)
+v.Local..BulkDeclareLong(irunid, ilogid, iret, irptid, iCounter)
+
+f.Intrinsic.Control.If(v.Screen.Form!chkAllDate.Value,=, 0)
+f.Intrinsic.Control.AndIf(v.Screen.Form!dtpBegDate.Value,>,v.Screen.Form!dtpEndDate.Value)
+	f.Intrinsic.UI.Msgbox("Beginning date should not be after Ending Date")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.endif
+
+f.Intrinsic.Control.If(v.Screen.Form!chkAllDate.Value,=, 0)
+	f.Intrinsic.String.Format(v.Screen.Form!dtpBegDate.Value,"YYYY-MM-DD",v.Global.sBegDate)
+	f.Intrinsic.String.Format(v.Screen.Form!dtpEndDate.Value,"YYYY-MM-DD",v.Global.sEndDate)
+	f.Intrinsic.String.Build("and Date_History between '{0}' and '{1}'",v.Global.sBegDate,v.Global.sEndDate,v.Local.sDateClause)
+	f.Intrinsic.String.Build("from{0}_to_{1}",v.Global.sBegDate,v.Global.sEndDate,v.Local.sFileName)
+f.Intrinsic.Control.Else
+	v.Local.sDateClause.Set("")
+	v.Local.sFileName.Set("AllDate")
+f.Intrinsic.Control.EndIf
+
+'Make sure Employees are selected
+f.Intrinsic.Control.If(v.Screen.Form!chkAllEmp.Value,=,0)
+f.Intrinsic.Control.andIf(v.DataTable.DT.Rowcount,=,0)
+	f.Intrinsic.UI.Msgbox("Please select Employees")
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+Gui.Form..Visible(False)
+f.Intrinsic.UI.InvokeWaitDialog("Processing")
+f.Data.DataView.Create("DT","DV")
+Function.Data.DataView.ToDataTable("DT", "DV", "Selected",True)
+
+
+'Handle final Employees Selection
+f.ODBC.Connection!conx.Execute("Delete from GCG_Employees")
+f.Intrinsic.Control.If(v.Screen.Form!chkAllEmp.Value,=,1)
+	f.Data.DataTable.CreateFromSQL("All_Employee_DT","conx","Select Employee from V_Employee_Mstr",true)
+	Function.Data.DataTable.SaveToDB("All_Employee_DT", "conx","GCG_Employees", "",128, "Employee@!@Employee")
+	f.Data.DataTable.Close("All_Employee_DT")
+f.Intrinsic.Control.Else
+	f.Intrinsic.Control.For(v.Local.iCounter,0,v.DataTable.Selected.RowCount--,1)
+		f.Intrinsic.String.Build("Select Employee from V_Employee_Mstr where employee between '{0}' and '{1}'",Variable.DataTable.Selected(v.Local.iCounter).BegID!FieldValString, Variable.DataTable.Selected(v.Local.iCounter).EndID!FieldValString,v.Local.sSQL)
+		f.Data.DataTable.CreateFromSQL("Add_Employee_DT","conx",v.Local.sSQL,true)
+		Function.Data.DataTable.SaveToDB("Add_Employee_DT", "conx","GCG_Employees", "",128, "Employee@!@Employee")
+		f.Data.DataTable.Close("Add_Employee_DT")	
+	f.Intrinsic.Control.Next(v.Local.iCounter)
+	
+	'Make GCG_Employees distinct
+	f.Data.DataTable.CreateFromSQL("Employee_Distinct_DT","conx","Select distinct Employee from GCG_Employees",true)
+	f.ODBC.Connection!conx.Execute("Delete from GCG_Employees")
+	Function.Data.DataTable.SaveToDB("Employee_Distinct_DT", "conx", "GCG_Employees", "",128,"Employee@!@Employee")
+	f.Data.DataTable.Close("Employee_Distinct_DT")
+f.Intrinsic.Control.EndIf
+
+
+v.Local.sSQL.set("Select p.Employee, e.Name, sum(Pre_Tax_DeDuct_2) as Health, sum(Pre_Tax_DeDuct_3) as Dental, sum(Pre_Tax_DeDuct_8) as Vision, sum(Pre_Tax_DeDuct_5) as FSA, sum(Pre_Tax_DeDuct_7) as HSA,  sum(Pre_Tax_DeDuct_6) as Dependent_Care")
+f.Intrinsic.String.Build("{0} from V_Pay_Hist_Ded p join V_Employee_Mstr e on e.employee = p.employee where Earnings = 'DD'",v.Local.sSQL,v.Local.sSQL)
+f.Intrinsic.String.Build("{0} {1} group by p.Employee, e.Name order by p.employee",v.Local.sSQL,v.Local.sDateClause,v.Local.sSQL)
+ 
+f.Data.DataTable.CreateFromSQL("Export","conx",v.Local.sSQL,true)
+v.Local.sMap.Set("Employee@!@Employee*!*Name@!@Name*!*Health@!@Health*!*Dental@!@Dental*!*Vision@!@Vision*!*FSA@!@FSA*!*HSA@!@HSA*!*Dependent_Care@!@Dependent_Care")
+f.ODBC.Connection!conx.Execute("Delete from GCG_Deduction")
+Function.Data.DataTable.SaveToDB("Export", "conx","GCG_Deduction", "",128, v.Local.sMap)
+f.Data.DataTable.Close("Export")
+
+f.ODBC.Connection!conx.Execute("Delete from gcg_deduction where employee not in (select employee from gcg_Employees)")
+f.ODBC.Connection!conx.Execute("Update GCG_Deduction set Total = Health + Dental + Vision + FSA + HSA + Dependent_Care")
+
+
+
+f.Data.DataTable.CreateFromSQL("Export","conx","Select * from GCG_Deduction order by Employee",true)
+f.Intrinsic.Control.For(v.Local.iCounter,0,v.DataTable.Export.RowCount--,1)
+	f.Intrinsic.String.Build("{0}'{1},{2},{3},",v.Local.sContent,Variable.DataTable.Export(v.Local.iCounter).Employee!FieldValString,Variable.DataTable.Export(v.Local.iCounter).Name!FieldValString,Variable.DataTable.Export(v.Local.iCounter).Health!FieldValString,v.Local.sContent)
+	f.Intrinsic.String.Build("{0}{1},{2},{3},",v.Local.sContent,Variable.DataTable.Export(v.Local.iCounter).Dental!FieldValString,Variable.DataTable.Export(v.Local.iCounter).Vision!FieldValString,Variable.DataTable.Export(v.Local.iCounter).FSA!FieldValString,v.Local.sContent)
+	f.Intrinsic.String.Build("{0}{1},{2},{3}",v.Local.sContent,Variable.DataTable.Export(v.Local.iCounter).HSA!FieldValString,Variable.DataTable.Export(v.Local.iCounter).Dependent_Care!FieldValString,Variable.DataTable.Export(v.Local.iCounter).Total!FieldValString,v.Local.sContent)
+	f.Intrinsic.String.Build("{0}{1}",v.Local.sContent,v.Ambient.NewLine,v.Local.sContent)
+f.Intrinsic.Control.Next(v.Local.iCounter)
+f.Data.DataTable.Close("Export")
+
+f.Intrinsic.Control.If(v.Local.sContent,<>,"")
+	f.Intrinsic.Control.CallSub(write_file,"Content",v.Local.sContent)
+f.Intrinsic.Control.EndIf
+f.Intrinsic.UI.CloseWaitDialog
+
+
+f.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdOK_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Emp_Cafeteria.g2u",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdOK_Click.End
+
+Program.Sub.Write_File.Start
+F.Intrinsic.Control.SetErrorHandler("Write_File_Err")
+F.Intrinsic.Control.ClearErrors
+
+
+v.Local..BulkDeclareString(sError, sFile, sFileName, sFullPath, sDate, sContent, sTime)
+V.Local.bexists.Declare(Boolean)
+v.Local.sContent.Set(v.Args.Content)
+f.Intrinsic.String.Concat("Employee,Name,Health,Dental,Vision,FSA,HSA,Dependent_Care,Total",v.Ambient.NewLine,v.Local.sContent,v.Local.sContent)
+f.Intrinsic.String.Build("{0}\Deduction_Export",v.Caller.FilesDir,v.Local.sfile)
+'see if the folder exists
+'f.Intrinsic.UI.Msgbox(v.Local.sFile)
+F.Intrinsic.File.Exists(V.Local.sfile,V.Local.bexists)
+'if the file doesn't exists create it
+F.Intrinsic.Control.If(V.Local.bexists,=,False)
+	F.Intrinsic.File.CreateDir(V.Local.sfile)
+F.Intrinsic.Control.EndIf
+'set the date and format it
+Function.Intrinsic.String.Format (V.Ambient.Date ,"MMDDYYYY",V.Local.sdate)
+Function.Intrinsic.String.Format (V.Ambient.Time ,"HhNnSs",V.Local.sTime)
+'build the filename
+F.Intrinsic.String.Build("{0}_{1}.csv",V.Local.sDate,v.Local.sTime,v.Local.sfilename)
+'build the full path
+F.Intrinsic.String.Build("{0}\{1}",V.local.sfile,V.Local.sfilename,V.Local.sfullpath)
+F.Intrinsic.File.String2File(V.Local.sfullpath,V.Local.sContent)
+F.Intrinsic.UI.Msgbox("File created")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Write_File_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_4448_Labor_Payroll_Export.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Comments.Start
+${$0$}$$}$$}$5/22/2017 9:37:29 PM$}$False
+${$3$}$0$}$$}$0$}$-1$}$$}$12:00:00 AM$}$for SMS Millcraft, per quote 6044
+Import processed Invoice details, by branch location, as Invoice and/or Accrual Batches.  Batch IDs will be manually entered.
+Import files will have header, 001, and 002 records.
+Header layout is
+Row ID, Voucher#, Invoice Date, Invoice#, PO#, Vendor#, , Gross Amt, Tax,, Currency, Record Type, Date
+
+001 layout is
+Row ID, Voucher#, GL Company, Account, Line Amt
+
+002 layout is
+Row ID, Voucher#, PO#, Receipt#, Line#, Number, Reference, UM, Price, Qty, Line Amt
+
+Each 001 Record where a 002 record is found, and a PO# exists on the 002 record, are Invoice/Accruals and will be written to the Accrual Upload File. For Records with a matching PO, create only a single Invoice record.
+Each 001 Record without a PO# associated are Invoice, and will be written to the Invoice Upload File.
+
+Program.Sub.Comments.End
